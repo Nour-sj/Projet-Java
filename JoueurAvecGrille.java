@@ -1,45 +1,36 @@
 package batailleNavale;
 
-import java.util.Scanner;
-public class JoueurTexte extends JoueurAvecGrille {
-	private Scanner sc = new Scanner(System.in);
+public abstract class JoueurAvecGrille extends Joueur {
+	private GrilleNavale grille;//attribut
 	
-	public JoueurTexte(GrilleNavale g, String nom ) {
-		super(g, nom);
+	
+	public JoueurAvecGrille(GrilleNavale g, String nom) {
+		super(g.getTaille(),nom);
+		this.grille=g;
+	}
+	
+	public JoueurAvecGrille (GrilleNavale g) {
+		super(g.getTaille());
+		this.grille=g;
+	}
+	
+	public GrilleNavale getGrille() {
+		return grille;
+	}
+	
+	public int defendre(Coordonnee c) {
+		grille.recoitTir(c);
+		if(grille.estCoule(c)) {
+			if (grille.perdu())
+				return GAMEOVER;
+			return COULE;
 		}
-	
-	public JoueurTexte(GrilleNavale g) {
-		super(g);
+		if(grille.estALEau(c))
+			return A_L_EAU;
+		if (grille.estTouche(c))
+			return TOUCHE;
+		throw new RuntimeException ("La grille ne reçoit pas la coordonnée du tir");
 	}
-	
-	protected void retourAttaque(Coordonnee c, int etat) {
-		if(etat == 1) 
-			System.out.println("Vous avez touché un navire en "+ c +'\n');
-		 if(etat == 2) 
-			System.out.println("Vous avez coulé le navire en " + c +'\n');
-		 if(etat == 3) 
-			System.out.println("Vous avez tirez dans l'eau en " + c +'\n');
-		 if(etat == 4) 
-			System.out.println("WINNER : "+ this.getNom());
-	}
-	
-	protected void retourDefense(Coordonnee c, int etat) {
-		 if(etat == 1) 
-			System.out.println("Vous avez été touché en "+ c +'\n');
-		 if(etat == 2) 
-			System.out.println("Votre navire a coulé en " + c +'\n');
-		 if(etat == 3) 
-			System.out.println("Le tir précédent est allé à l'eau en " + c +'\n');
-		 if(etat == 4) 
-			System.out.println("GAMEOVER : " + this.getNom());
-	}
-	
-	public Coordonnee choixAttaque () {
-		System.out.println(this.getGrille());
-		System.out.println("Entrez la coordonnée d'attaque");
-		String input = sc.next();
-		Coordonnee c = new Coordonnee(input);
-		
-		return c;
-	}
+
+
 }
